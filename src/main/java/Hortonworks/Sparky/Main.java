@@ -1,3 +1,4 @@
+package Hortonworks.Sparky;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -22,11 +23,12 @@ public class Main {
 
         // Create a Java  Spark Context
         JavaSparkContext sc = new JavaSparkContext(conf);
-        String inFile = "src/main/resources/shakespeare.txt";
-        String outFile = "/tmp/shakespeareWordCount";
+        String localInFile = "src/main/resources/shakespeare.txt";
+        String localOutFile = "src/main/resources/shakespeareWordCount";
+        String remoteInFile = "hdfs:///tmp/shakespeare.txt";
+        String remoteOutFile = "hdfs:///tmp/shakespeareWordCount";
         // Load the text into a Spark RDD, which is a distributed representation of each line of text
-        JavaRDD<String> textFile = sc.textFile(inFile);
-        //JavaRDD<String> textFile = sc.textFile("hdfs:///tmp/shakespeare.txt");
+        JavaRDD<String> textFile = sc.textFile(localInFile);
         JavaPairRDD<String, Integer> counts = textFile
                 .flatMap(s -> Arrays.asList(s.split("[ ,]"))
                         .iterator())
@@ -37,10 +39,6 @@ public class Main {
 
         System.out.println("Total words: " + counts.count());
 
-        //counts.saveAsTextFile("hdfs:///tmp/shakespeareWordCount");
-        File writeFile = new File(outFile);
-        if(!writeFile.exists()) {
-            counts.saveAsTextFile("C:/Program_Codes/BigSpark"+outFile);
-        }
+        counts.saveAsTextFile(localOutFile);
     }
 }
