@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args){
+
         //uncomment this if you want a ton of log errors to display in the console
         Logger.getLogger("org").setLevel(Level.ERROR);
         //so we can have our hadoop path set up. Download hadoop and set this path if needed
@@ -23,12 +24,15 @@ public class Main {
 
         // Create a Java  Spark Context
         JavaSparkContext sc = new JavaSparkContext(conf);
+        boolean remote = true;
         String localInFile = "src/main/resources/shakespeare.txt";
         String localOutFile = "src/main/resources/shakespeareWordCount";
         String remoteInFile = "hdfs:///tmp/shakespeare.txt";
         String remoteOutFile = "hdfs:///tmp/shakespeareWordCount";
+        String in = !remote ? localInFile : remoteInFile;
+        String out = !remote ? localOutFile : remoteOutFile;
         // Load the text into a Spark RDD, which is a distributed representation of each line of text
-        JavaRDD<String> textFile = sc.textFile(localInFile);
+        JavaRDD<String> textFile = sc.textFile(in);
         JavaPairRDD<String, Integer> counts = textFile
                 .flatMap(s -> Arrays.asList(s.split("[ ,]"))
                         .iterator())
@@ -39,6 +43,6 @@ public class Main {
 
         System.out.println("Total words: " + counts.count());
 
-        counts.saveAsTextFile(localOutFile);
+        counts.saveAsTextFile(out);
     }
 }
