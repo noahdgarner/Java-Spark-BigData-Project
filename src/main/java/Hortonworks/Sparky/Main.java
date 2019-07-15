@@ -1,4 +1,5 @@
 package Hortonworks.Sparky;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -12,7 +13,6 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args){
-
         //uncomment this if you want a ton of log errors to display in the console
         Logger.getLogger("org").setLevel(Level.ERROR);
         //so we can have our hadoop path set up. Download hadoop and set this path if needed
@@ -24,7 +24,7 @@ public class Main {
 
         // Create a Java  Spark Context
         JavaSparkContext sc = new JavaSparkContext(conf);
-        boolean remote = true;
+        boolean remote = false;
         String localInFile = "src/main/resources/shakespeare.txt";
         String localOutFile = "src/main/resources/shakespeareWordCount";
         String remoteInFile = "hdfs:///tmp/shakespeare.txt";
